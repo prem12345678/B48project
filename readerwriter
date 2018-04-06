@@ -1,0 +1,56 @@
+#include<pthread.h>
+#include<stdio.h>
+
+void *reader();
+void *writer();
+pthread_mutex_t l,write1;
+int readcount=0;
+int data=0;
+int main()
+{
+pthread_mutex_init(&l,NULL);
+pthread_mutex_init(&write1,NULL);
+pthread_t thread1,thread2,thread3,thread4,thread5;
+int i;
+pthread_create(&thread1,NULL,writer,NULL);
+pthread_create(&thread2,NULL,reader,NULL);
+pthread_create(&thread3,NULL,reader,NULL);
+pthread_create(&thread4,NULL,writer,NULL);
+pthread_create(&thread5,NULL,writer,NULL);
+
+pthread_join(thread1,NULL);
+pthread_join(thread2,NULL);
+pthread_join(thread3,NULL);
+pthread_join(thread4,NULL);
+pthread_join(thread5,NULL);
+
+}
+void *reader()
+{
+pthread_mutex_lock(&l);
+readcount++;
+if(readcount==1)
+{
+pthread_mutex_lock(&write1);
+}
+//readcount--;
+pthread_mutex_unlock(&l);
+printf("data read by the reader is %d\n",data);
+sleep(1);
+pthread_mutex_lock(&write1);
+readcount--;
+if(readcount==0)
+{
+pthread_mutex_unlock(&write1);
+}
+pthread_mutex_unlock(&l);
+}
+
+void *writer()
+{
+pthread_mutex_lock(&write1);
+data++;
+printf("data written by the write is %d\n",data);
+sleep(1);
+pthread_mutex_unlock(&write1);
+}
