@@ -28,6 +28,7 @@ pthread_join(thread5,NULL);
 void *reader()
 {
 pthread_mutex_lock(&l);
+printf("reader enters into critical section");
 readcount++;
 if(readcount==1)
 {
@@ -44,13 +45,17 @@ if(readcount==0)
 pthread_mutex_unlock(&write1);
 }
 pthread_mutex_unlock(&l);
+printf("reader is existing from critical section");
 }
 
 void *writer()
 {
+printf("writer attemps");
 pthread_mutex_lock(&write1);
+printf("writer enters into critical section");
 data++;
 printf("data written by the write is %d\n",data);
 sleep(1);
 pthread_mutex_unlock(&write1);
+printf("writer is existing from critical section");
 }
