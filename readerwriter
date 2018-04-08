@@ -1,6 +1,7 @@
 #include<pthread.h>
 #include<stdio.h>
 #include<unistd.h>
+#include<stdlib.h>
 
 
 void *reader();
@@ -12,9 +13,55 @@ int main()
 {
 pthread_mutex_init(&l,NULL);
 pthread_mutex_init(&write1,NULL);
-pthread_t thread1[20],thread2[20];
+pthread_t thread1,thread2;
 //pthread_t thread1,thread2,thread3,thread4,thread5;
-int i;
+int i,a,cs=1;
+while(cs)
+{
+printf("enter the no which conditions you want to check\n");
+printf("1 for reader and the writer\n");
+printf("2 for writer and the reader\n");
+printf("3 for writer and again writer\n");
+printf("4 for reader and the again reader\n");
+//printf("5 for exit\n");
+scanf("%d",&a);
+switch(a)
+{
+case 1:
+pthread_create(&thread1,NULL,reader,NULL);
+pthread_create(&thread2,NULL,writer,NULL);
+
+pthread_join(thread1,NULL);
+pthread_join(thread2,NULL);
+break;
+
+case 2:
+pthread_create(&thread1,NULL,writer,NULL);
+pthread_create(&thread2,NULL,reader,NULL);
+
+pthread_join(thread1,NULL);
+pthread_join(thread2,NULL);
+break;
+
+case 3:
+pthread_create(&thread1,NULL,writer,NULL);
+pthread_create(&thread2,NULL,writer,NULL);
+
+pthread_join(thread1,NULL);
+pthread_join(thread2,NULL);
+break;
+case 4:
+pthread_create(&thread1,NULL,reader,NULL);
+pthread_create(&thread2,NULL,reader,NULL);
+
+pthread_join(thread1,NULL);
+pthread_join(thread2,NULL);
+break;
+}
+printf("\nyou want to continue press 1 else 0");
+scanf("%d ",&cs);
+}
+/*
 for(i=0;i<5;i++)
 {
 pthread_create(&thread1[i],NULL,writer,NULL);
@@ -23,7 +70,7 @@ pthread_create(&thread2[i],NULL,reader,NULL);
 /*pthread_create(&thread3,NULL,reader,NULL);
 pthread_create(&thread4,NULL,writer,NULL);
 pthread_create(&thread5,NULL,writer,NULL);
-*/
+
 for(i=0;i<5;i++)
 {
 pthread_join(thread1[i],NULL);
@@ -32,7 +79,7 @@ pthread_join(thread2[i],NULL);
 pthread_join(thread4,NULL);
 pthread_join(thread5,NULL);
 */
-}
+
 }
 void *reader()
 
@@ -50,8 +97,8 @@ pthread_mutex_lock(&write1);
 
 pthread_mutex_unlock(&l);
 printf("data read by the reader is %d\n",data);
-sleep(5);
 pthread_mutex_lock(&write1);
+sleep(1);
 readcount--;
 if(readcount==0)
 {
@@ -70,7 +117,7 @@ pthread_mutex_lock(&write1);
 printf("writer enters into critical section\n");
 data++;
 printf("data written by the write is %d\n",data);
-sleep(5);
+sleep(1);
 pthread_mutex_unlock(&write1);
 printf("writer existes from critical section\n");
 }
