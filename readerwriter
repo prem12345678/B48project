@@ -1,5 +1,7 @@
 #include<pthread.h>
 #include<stdio.h>
+#include<unistd.h>
+
 
 void *reader();
 void *writer();
@@ -10,25 +12,36 @@ int main()
 {
 pthread_mutex_init(&l,NULL);
 pthread_mutex_init(&write1,NULL);
-pthread_t thread1,thread2,thread3,thread4,thread5;
+pthread_t thread1[5],thread2[5];
+//pthread_t thread1,thread2,thread3,thread4,thread5;
 int i;
-pthread_create(&thread1,NULL,writer,NULL);
-pthread_create(&thread2,NULL,reader,NULL);
-pthread_create(&thread3,NULL,reader,NULL);
+for(i=0;i<5;i++)
+{
+pthread_create(&thread1[i],NULL,writer,NULL);
+pthread_create(&thread2[i],NULL,reader,NULL);
+}
+/*pthread_create(&thread3,NULL,reader,NULL);
 pthread_create(&thread4,NULL,writer,NULL);
 pthread_create(&thread5,NULL,writer,NULL);
-
-pthread_join(thread1,NULL);
-pthread_join(thread2,NULL);
-pthread_join(thread3,NULL);
+*/
+for(i=0;i<5;i++)
+{
+pthread_join(thread1[i],NULL);
+pthread_join(thread2[i],NULL);
+/*pthread_join(thread3,NULL);
 pthread_join(thread4,NULL);
 pthread_join(thread5,NULL);
-
+*/
 }
-void *reader()
+}
+void *reader(void *arg)
+
 {
+int f;
+f=((int)arg);
+printf("reader attempts\n");
 pthread_mutex_lock(&l);
-printf("reader enters into critical section");
+printf("reader enters into critical section\n");
 readcount++;
 if(readcount==1)
 {
@@ -37,7 +50,7 @@ pthread_mutex_lock(&write1);
 //readcount--;
 pthread_mutex_unlock(&l);
 printf("data read by the reader is %d\n",data);
-sleep(1);
+sleep(5);
 pthread_mutex_lock(&write1);
 readcount--;
 if(readcount==0)
@@ -45,17 +58,21 @@ if(readcount==0)
 pthread_mutex_unlock(&write1);
 }
 pthread_mutex_unlock(&l);
-printf("reader is existing from critical section");
+printf("reader is existing from critical section\n");
 }
 
-void *writer()
+void *writer(void *arg)
 {
-printf("writer attemps");
+int f;
+f=((int)arg);
+printf("writer attempts\n");
 pthread_mutex_lock(&write1);
-printf("writer enters into critical section");
+printf("writer enters into critical section\n");
 data++;
 printf("data written by the write is %d\n",data);
-sleep(1);
+sleep(5);
 pthread_mutex_unlock(&write1);
-printf("writer is existing from critical section");
+printf("eriter existes from critical section");
 }
+
+
