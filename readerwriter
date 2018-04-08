@@ -59,7 +59,7 @@ pthread_join(thread2,NULL);
 break;
 }
 printf("\nyou want to continue press 1 else 0");
-scanf("%d ",&cs);
+scanf("%d",&cs);
 }
 /*
 for(i=0;i<5;i++)
@@ -97,7 +97,6 @@ pthread_mutex_lock(&write1);
 
 pthread_mutex_unlock(&l);
 printf("data read by the reader is %d\n",data);
-pthread_mutex_lock(&write1);
 sleep(1);
 readcount--;
 if(readcount==0)
@@ -116,7 +115,7 @@ int f;
 pthread_mutex_lock(&write1);
 printf("writer enters into critical section\n");
 data++;
-printf("data written by the write is %d\n",data);
+printf("data written by the writer is %d\n",data);
 sleep(1);
 pthread_mutex_unlock(&write1);
 printf("writer existes from critical section\n");
